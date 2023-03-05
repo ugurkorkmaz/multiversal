@@ -1,41 +1,31 @@
 package cosine_similarity
 
-import (
-	"math"
-)
+import "math"
 
-// CosineSimilarity calculates the cosine similarity between two vectors
-func CosineSimilarity(vectorOne map[string]float64, vectorSecond map[string]float64) float64 {
-	// Create a set of keys by merging keys of both vectors
-	vectorKey := make(map[string]bool)
+/*
+The Find function calculates the cosine similarity between two vectors represented as maps of float64 values.
 
-	for key := range vectorOne {
-		vectorKey[key] = true
-	}
+@param vectorOne Map of float64 values representing the first vector.
 
-	for key := range vectorSecond {
-		vectorKey[key] = true
-	}
+@param vectorSecond Map of float64 values representing the second vector.
+
+@returns Cosine similarity between two vectors as a float64 value.
+*/
+func Find(vectorOne, vectorSecond map[string]float64) float64 {
+	dotProduct, magnitudeVectorOne, magnitudeVectorSecond := 0.0, 0.0, 0.0
 
 	// Calculate dot product and magnitudes
-	dotProduct := 0.0
-	magnitudeVectorOne := 0.0
-	magnitudeVectorSecond := 0.0
-
-	for key := range vectorKey {
-		keyVectorOneValue := vectorOne[key]
-		keyVectorSecondValue := vectorSecond[key]
-		dotProduct += (keyVectorOneValue * keyVectorSecondValue)
-		magnitudeVectorOne += (keyVectorOneValue * keyVectorOneValue)
-		magnitudeVectorSecond += (keyVectorSecondValue * keyVectorSecondValue)
+	for key, value := range vectorOne {
+		if value2, ok := vectorSecond[key]; ok {
+			dotProduct += value * value2
+		}
+		magnitudeVectorOne += value * value
 	}
 
-	// Calculate magnitudes by taking square root of the sum of squares of values
-	magnitudeVectorOne = math.Sqrt(magnitudeVectorOne)
-	magnitudeVectorSecond = math.Sqrt(magnitudeVectorSecond)
+	for _, value := range vectorSecond {
+		magnitudeVectorSecond += value * value
+	}
 
 	// Calculate similarity using cosine similarity formula
-	similarity := dotProduct / (magnitudeVectorOne * magnitudeVectorSecond)
-
-	return similarity
+	return dotProduct / (math.Sqrt(magnitudeVectorOne) * math.Sqrt(magnitudeVectorSecond))
 }
